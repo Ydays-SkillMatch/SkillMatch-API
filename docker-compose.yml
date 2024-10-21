@@ -1,0 +1,13 @@
+services:
+  api:
+    container_name: Django
+    volumes:
+      - ./src:/SkillMatch/Api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8880:8880"
+    environment:
+      DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1"
+    command: bash -c "pip install -r requirements.txt && python manage.py makemigrations && python manage.py migrate && python manage.py runserver"
