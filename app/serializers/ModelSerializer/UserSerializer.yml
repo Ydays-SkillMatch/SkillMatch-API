@@ -1,0 +1,6 @@
+uuid:
+  rights: [user, admin]
+  serialized_name : "unique id"
+
+created_at:
+  rights: [admin, list]
