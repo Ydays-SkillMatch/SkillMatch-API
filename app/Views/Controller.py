@@ -1,17 +1,15 @@
 from django.db.migrations import serializer
 from django.http import JsonResponse
-from rest_framework import mixins
-from rest_framework.viewsets import GenericViewSet
+from rest_framework.views import APIView
 
-from app.Models import baseModel
+from app.Models.BaseModel import BaseModel
 from app.serializers.Serializer import Serializer
 
 
-class Controller(GenericViewSet,
-    mixins.ListModelMixin,
-    mixins.RetrieveModelMixin,
-    mixins.CreateModelMixin,
-    mixins.UpdateModelMixin,
-    mixins.DestroyModelMixin,):
-    def returnJSON(self,model):
-        return JsonResponse(Serializer.serialize(model),safe=False)
+class Controller(APIView):
+    
+    def __init__(self):
+        super().__init__()
+    
+    def serialize(self, models : BaseModel|list[BaseModel], route_type : str):
+        return JsonResponse(Serializer.serialize(models, route_type),safe=False)
