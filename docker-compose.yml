@@ -1,37 +1,26 @@
-version: '3'
-
+version: '3.8'
 services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT}:${PORT}"
+    depends_on:
+      - db
+    env_file:
+      - .env
+    volumes:
+      - .:/app
 
   db:
-    image: postgres:13  # Utilisez l'image officielle de PostgreSQL
-    environment:
-      POSTGRES_USER: "root"
-      POSTGRES_PASSWORD: "root"
-      POSTGRES_DB: "SkillMatch"
-    ports:
-      - "5433:5432"  # Exposez le port 5432 du conteneur PostgreSQL sur le port 5433 de l'hôte
+    image: postgres:13
     volumes:
-      - postgres_data:/var/lib/postgresql/data  # Stockage persistant des données PostgreSQL
-
-
-  web:
-    build: .
-    command: python manage.py runserver 0.0.0.0:8080
-    volumes:
-      - .:/app  # Montez le répertoire actuel pour le développement
+      - pg-data:/var/lib/postgresql/data
+    env_file:
+      - .env
     ports:
-      - "8080:8080"  # Exposez le port 8000 pour accéder à Django
-    environment:
-      DJANGO_DEBUG: "True"
-      DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1"
-      POSTGRES_DB: SkillMatch
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
-      POSTGRES_HOST: db  # Le conteneur Django se connectera à PostgreSQL via ce nom de service
-      POSTGRES_PORT: 5432  # Le conteneur Django doit se connecter sur le port interne de PostgreSQL
-
-    depends_on:
-      - db  # Assurez-vous que la base de données est démarrée avant Django
+      - "5435:${POSTGRES_PORT}"
 
 volumes:
-  postgres_data:
+  pg-data:
