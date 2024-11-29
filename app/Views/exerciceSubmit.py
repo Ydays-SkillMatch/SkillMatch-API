@@ -15,10 +15,8 @@ class ExerciceSubmit(Controller):
         if not user_code:
             return self.response({"error": "Code utilisateur non fourni."}, status=400)
 
-        # Exécuter le test
         is_correct, output = run_test(user_code, exercise.test_code)
 
-        # Enregistrer la soumission
         submission = submitCode.objects.create(
             user=request.user,
             exercise=exercise,
@@ -26,7 +24,7 @@ class ExerciceSubmit(Controller):
             is_correct=is_correct
         )
 
-        # Retourner le résultat
+        # Retourner le résultat en JSON
         return self.response({
             "is_correct": is_correct,
             "output": output

@@ -5,10 +5,9 @@ def run_test(user_code, test_code):
         #Fussionne les deux fichiers
         full_code = f"{user_code}\n{test_code}"
 
-        #Le mettre dans un fichier temporaire
+        #Mettre dans un fichier temporaire
         with open("temp_script.py", "w") as temp_file:
             temp_file.write(full_code)
-        #Lance le script
         result = subprocess.run(
             ["python", "temp_script.py"],
             capture_output=True,
