@@ -8,7 +8,7 @@ class BaseModel(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    deleted_at = models.DateTimeField()
+    deleted_at = models.DateTimeField(blank=True,null=True)
     
     def __getitem__(self, items):
         return getattr(self, items)

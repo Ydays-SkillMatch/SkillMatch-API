@@ -7,3 +7,7 @@ ruff==0.6.7
 django-filter==24.3
 django-cors-headers==4.4.0
 django-silk==5.2.0
+python-dotenv==1.0.1
+PyYAML==6.0.2
+sqlparse==0.5.1
+asgiref==3.8.1

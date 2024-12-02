@@ -12,12 +12,12 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 import os
 from pathlib import Path
-
 from rest_framework.schemas import openapi
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-os.getenv("")
+load_dotenv(dotenv_path=".env")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -29,6 +29,8 @@ SECRET_KEY = "django-insecure-zm2=&a^6+i@7h*#@b#3%p+zziddl3_ijqm5#kr_hzvv3b@g2*w
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
+
+APPEND_SLASH = True
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
