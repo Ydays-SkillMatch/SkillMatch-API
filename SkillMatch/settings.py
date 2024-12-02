@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 import os
 from pathlib import Path
+print("Database Name:", os.getenv("POSTGRES_DB"))
+print("Database User:", os.getenv("POSTGRES_USER"))
+print("Database Password:", os.getenv("POSTGRES_PASSWORD"))
+print("Database Host:", os.getenv("POSTGRES_HOST"))
+print("Database Port:", os.getenv("POSTGRES_PORT"))
 from rest_framework.schemas import openapi
 from dotenv import load_dotenv
 
@@ -47,6 +52,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework.authtoken",
     "rest_framework",
+    "drf_spectacular",
+    "drf_spectacular_sidecar",
 ]
 
 MIDDLEWARE = [
