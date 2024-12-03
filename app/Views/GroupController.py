@@ -1,11 +1,14 @@
 # from django.http import JsonResponse
 # from django.contrib.auth.models import User
 import pdb
+
 from django.contrib import messages
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.hashers import check_password, make_password
 from django.http import HttpResponse, JsonResponse
+
 from app.Models.Group import Group
 from app.Models.User import User
+from app.Models.User_Group import UserGroup
 from app.Views.Controller import Controller
 
 
@@ -36,12 +39,8 @@ class GroupController(Controller):
         idUser = request.GET.get('idUser')
         idGroup = request.GET.get('idGroup')
         if User.objects.get(id=idUser) != None and Group.objects.get(id=idGroup) != None :
-            R_User = User.objects.get(id=idUser)
-            R_Group = Group.objects.get(id=idGroup)
-            R_User.groups.add(R_Group)
-            R_Group.users.add(R_User)
-            R_User.save()
-            R_Group.save()
+            new_relation = UserGroup(idUser=idUser,idGroup=idGroup)
+            new_relation.save()
         else:
             return HttpResponse(f"User Non Liée")
         return HttpResponse(f"User Liée")

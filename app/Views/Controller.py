@@ -12,4 +12,3 @@ class Controller(APIView):
     
     def serialize(self, models : BaseModel|list[BaseModel], route_type : str):
         return JsonResponse(Serializer.serialize(models, route_type),safe=False)
-    

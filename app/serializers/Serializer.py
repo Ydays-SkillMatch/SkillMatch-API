@@ -11,8 +11,10 @@ class Serializer(serializers.ModelSerializer):
         # pdb.set_trace()
         dic = {}
         model_name = model.__class__.__name__
+        if model_name == "QuerySet":
+            return [Serializer.serialize(m,route_type) for m in model]
         
-        if type(model) == list or model_name == "QuerySet":
+        if type(model) == list:
             return [Serializer.serialize(m,route_type) for m in model]
         
         with open(f"/app/app/serializers/ModelSerializer/{model_name}Serializer.yml") as stream:
