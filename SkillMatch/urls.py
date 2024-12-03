@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django.urls import path, include
-
 from app import views, urls
 from app.Views.UserController import UserController
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
@@ -19,5 +18,9 @@ urlpatterns = [
         "api/schema/swagger-ui/",
         SpectacularSwaggerView.as_view(url_name="schema"),
         name="swagger-ui",
-    )
+    ),
+    path('createExercice/', views.CreateExercice),
+    path('createLanguage/', views.CreateLanguage),
+    path('upload/', views.UploadFile),
+    path('users/', UserController.as_view())
 ]
