@@ -1,5 +1,5 @@
 # from django.http import JsonResponse
-# from django.contrib.auth.models import User
+from drf_spectacular.openapi import AutoSchema
 import os
 from django.contrib import messages
 from app.Models.Language import Language
@@ -7,6 +7,7 @@ from app.Views.Controller import Controller
 
 
 class LanguageController(Controller):
+    schema = AutoSchema()
     
     def __init__(self):
         super().__init__()

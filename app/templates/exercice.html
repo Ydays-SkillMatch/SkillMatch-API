@@ -19,7 +19,7 @@
         <label for="Language">Langage : </label>
         <select id="Language" name="language">
             {% for language in lang %}
-            <option value="{{language.name}}" selected>{{language.name}}</option>
+            <option value="{{language.uuid}}" selected>{{language.name}}</option>
             {% endfor %}
         </select>
         <label for="Test">Fichier Test : </label>
