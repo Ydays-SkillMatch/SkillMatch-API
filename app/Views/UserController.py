@@ -1,5 +1,3 @@
-# from django.http import JsonResponse
-# from django.contrib.auth.models import User
 import pdb
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password, check_password
@@ -42,16 +40,20 @@ class UserController(Controller):
             test_user = User.objects.filter(username__startswith=username, email__startswith=email)
             return super().serialize(test_user, "list")
         
-    
-    def setUser(request):
+    def put(self, request):
         uuid = request.GET.get('id')
         username = request.POST.get('username')
         email = request.POST.get('email')
+        admin = request.POST.get('admin')
         user = User.objects.get(uuid=uuid)
         user.username = username
         user.email = email
+        if admin == 1:
+            user.admin = True
+        else:
+            user.admin = False
         user.save()
-        return HttpResponse(f"Nom d'utilisateur : {username}, Email : {email}")
+        return super().serialize(user, "user")
     
     def login(request):
         email = request.POST.get('email')
@@ -62,22 +64,10 @@ class UserController(Controller):
             return HttpResponse(f"Nom d'utilisateur : {user.username}, Email : {email}")
         else :
             return HttpResponse("None")
-        
-    def setAdmin(request):
-        getid = request.GET.get('id')
-        test_user = User.objects.get(id=getid)
-        before = test_user.admin
-        if test_user.admin == True :
-            test_user.admin = False
-        else :
-            test_user.admin = True
-        test_user.save()
-        return HttpResponse(f"Avant : {before}, Maintenant : {test_user.admin}")
     
-    def delete(request):
+    def delete(self, request):
         getid = request.GET.get('id')
         test_user = User.objects.get(id=getid)
         test_user.delete()
-        return HttpResponse(f"User deleted")
-    
-    
+        return super().serialize(test_user, "user")
+        

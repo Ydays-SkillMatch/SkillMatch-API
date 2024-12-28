@@ -1,15 +1,18 @@
 # from django.http import JsonResponse
 # from django.contrib.auth.models import User
 import pdb
+
 from django.contrib import messages
-from django.contrib.auth.hashers import make_password, check_password
+from drf_spectacular.openapi import AutoSchema
 from django.http import HttpResponse, JsonResponse
+
 from app.Models.Group import Group
 from app.Models.User import User
 from app.Views.Controller import Controller
 
 
 class GroupController(Controller):
+    schema = AutoSchema()
     
     def __init__(self):
         super().__init__()
@@ -32,25 +35,21 @@ class GroupController(Controller):
         messages.success(request, "Formulaire soumis avec succès !")
         return super().serialize(new_group, "user")
     
-    def setUserToGroup(request):
-        idUser = request.GET.get('idUser')
-        idGroup = request.GET.get('idGroup')
-        if User.objects.get(id=idUser) != None and Group.objects.get(id=idGroup) != None :
-            R_User = User.objects.get(id=idUser)
-            R_Group = Group.objects.get(id=idGroup)
-            R_User.groups.add(R_Group)
-            R_Group.users.add(R_User)
-            R_User.save()
-            R_Group.save()
-        else:
-            return HttpResponse(f"User Non Liée")
-        return HttpResponse(f"User Liée")
-   
-    def setGroup(request):
+    def put(self, request):
         uuid = request.GET.get('id')
         username = request.POST.get('name')
+        uuidUser = request.POST.get('uuidUser')
+        uuidGroup = request.POST.get('uuidGroup')
         group = Group.objects.get(uuid=uuid)
         group.name = username
+        if User.objects.get(uuid=uuidUser) != None and Group.objects.get(uuid=uuidGroup) != None :
+            group.users.add(User.objects.get(uuid=uuidUser))
         group.save()
-        return HttpResponse(f"Nom de Groupe : {username}")
+        return super().serialize(group, "user")
+    
+    def delete(self, request):
+        getuuid = request.GET.get('uuid')
+        group = Group.objects.get(uuid=getuuid)
+        group.delete()
+        return super().serialize(group, "user")
     
