@@ -52,10 +52,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework.authtoken",
     "rest_framework",
-    "drf_spectacular",
-    "drf_spectacular_sidecar",
     'corsheaders',
-
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -155,9 +153,13 @@ REST_FRAMEWORK = {
     ]
 }
 
-SPECTACULAR_SETTINGS = {
-    "DESCRIPTION": "Le beau swagger",
-    "VERSION": "1.0.0",
-    "SERVE_INCLUDE_SCHEMA": False,
-    "COMPONENT_SPLIT_REQUEST": True,
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    },
+    'USE_SESSION_AUTH': False,
 }

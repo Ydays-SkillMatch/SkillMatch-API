@@ -116,6 +116,26 @@ class UserController(Controller):
             return HttpResponse("Utilisateur non trouvé", status=404)
         return HttpResponse(f"Statut admin mis à jour : {user.admin}")
 
+    def setAdmin(self, request):
+        user_uuid = request.GET.get('uuid')  # Utilisation des UUID pour l'administration.
+        try:
+            user = User.objects.get(uuid=user_uuid)
+            user.admin = True
+            user.save()
+        except User.DoesNotExist:
+            return HttpResponse("Utilisateur non trouvé", status=404)
+        return HttpResponse(f"Statut admin mis à jour : {user.admin}")
+
+    def setUser(self, request):
+        user_uuid = request.GET.get('uuid')  # Utilisation des UUID pour l'administration.
+        try:
+            user = User.objects.get(uuid=user_uuid)
+            # Ajoutez ici la logique spécifique que vous souhaitez implémenter pour setUser
+            user.save()
+        except User.DoesNotExist:
+            return HttpResponse("Utilisateur non trouvé", status=404)
+        return HttpResponse(f"Utilisateur mis à jour : {user.username}")
+
     def delete(self, request):
         user_uuid = request.GET.get('uuid')  # Suppression par UUID.
         try:
