@@ -1,7 +1,3 @@
-id:
-  rights: [admin]
-  serialized_name : "id"
-
 uuid:
   rights: [user, admin, list]
   serialized_name : "unique id"

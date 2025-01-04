@@ -3,7 +3,7 @@ id:
   serialized_name : "id"
 
 uuid:
-  rights: [user, admin, list]
+  rights: [user, admin]
   serialized_name : "unique id"
 
 created_at:

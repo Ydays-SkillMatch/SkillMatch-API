@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h2>Modifier Son Utilisateur</h2>
+    <form action="/api/setUser/?id={{ User.uuid }}" method="post" style="display: flex; flex-direction:column">
+        <label for="username">username : </label>
+        <input id="username" type="text" name="username" value="{{User.username}}">
+        <label for="email">email : </label>
+        <input id="email" type="email" name="email" value="{{User.email}}">
+        <button type="submit">Modifier</button>
+    </form>
+</body>
+
+</html>

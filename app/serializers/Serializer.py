@@ -1,4 +1,5 @@
 import yaml
+import pdb
 from rest_framework import serializers
 
 from app.Models.BaseModel import BaseModel
@@ -6,11 +7,16 @@ from app.Models.BaseModel import BaseModel
 
 class Serializer(serializers.ModelSerializer):
     def serialize(model : BaseModel|list[BaseModel], route_type : str):
-        if type(model) == list:
-            return [Serializer.serialize(m) for m in model]
-        
+        # var = type(model)
+        # pdb.set_trace()
         dic = {}
         model_name = model.__class__.__name__
+        if model_name == "QuerySet":
+            return [Serializer.serialize(m,route_type) for m in model]
+        
+        if type(model) == list:
+            return [Serializer.serialize(m,route_type) for m in model]
+        
         with open(f"/app/app/serializers/ModelSerializer/{model_name}Serializer.yml") as stream:
             param = yaml.safe_load(stream)
         
