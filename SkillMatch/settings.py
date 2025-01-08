@@ -17,6 +17,7 @@ print("Database User:", os.getenv("POSTGRES_USER"))
 print("Database Password:", os.getenv("POSTGRES_PASSWORD"))
 print("Database Host:", os.getenv("POSTGRES_HOST"))
 print("Database Port:", os.getenv("POSTGRES_PORT"))
+print("Database Port:", os.getenv("POSTGRES_NAME"))
 from rest_framework.schemas import openapi
 from dotenv import load_dotenv
 
@@ -98,7 +99,7 @@ DATABASES = {
         "USER": os.getenv("POSTGRES_USER"),
         "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
         "HOST": os.getenv("POSTGRES_HOST"),
-        "PORT": os.getenv("POSTGRES_PORT"),
+        "PORT": os.getenv("POSTGRES_PORT", "5432"),
     }
 }
 
