@@ -10,4 +10,5 @@ __all__ = [
     'BaseModel',
     'Group',
     'User',
+    'Language',
 ]
