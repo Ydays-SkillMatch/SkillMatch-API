@@ -1,26 +1,21 @@
-version: '3.8'
 services:
-  backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  postgres:
+    image: postgres:15
+    container_name: truckfly-blog-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: skillmatchpassword
+      POSTGRES_USER: skillmatch
+      POSTGRES_DB: skillmatch
     ports:
-      - "${PORT}:8080"
-    depends_on:
-      - db
-    env_file:
-      - .env
+      - "5432:5432"
     volumes:
-      - .:/app
-
-  db:
-    image: postgres:13
-    volumes:
-      - pg-data:/var/lib/postgresql/data
-    env_file:
-      - .env
-    ports:
-      - "5435:${POSTGRES_PORT}"
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U django -d django" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
-  pg-data:
+  postgres_data:
