@@ -47,15 +47,15 @@ class ExerciceController(Controller):
     )
             
     def post(self, request):
-        os.makedirs("app/exercice/python/test/", exist_ok=True)
-        os.makedirs("app/exercice/python/correct/", exist_ok=True)
+        os.makedirs(f"app/exercice/{language.name.lower()}/test/", exist_ok=True)
+        os.makedirs(f"app/exercice/{language.name.lower()}/correct/", exist_ok=True)
         name = request.POST.get('name')
         describe = request.POST.get('describe')
         timer = request.POST.get('timer')
         language = Language.objects.get(uuid=request.POST.get('language'))
         uuid2 = uuid.uuid4()
-        test = f"app/exercice/python/test/{uuid2}.txt"
-        correct = f"app/exercice/python/correct/{uuid2}.py"
+        test = f"app/exercice/{language.name.lower()}/test/{uuid2}.txt"
+        correct = f"app/exercice/{language.name.lower()}/correct/{uuid2}.{language.extension}"
         new_test = Exercice(uuid=uuid2,name=name,describe=describe,timer=timer,ex_language=language,test=test,correct=correct)
         new_test.save()
         with open(test, "w") as file:

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h2>Faire un Exercice</h2>
+    <form action="/api/submitcode/?uuid={{exercice.uuid}}" method="post" style="display: flex; flex-direction:column">
+        <label for="Name">{{exercice.name}} </label>
+        <label for="Describe">{{exercice.describe}} </label>
+        <label for="Timer">Temps (minutes) : </label>
+        <p id="Timer"></p>
+        <label for="Language">Langage : </label>
+        <p id="Langage">{{exercice.ex_language.name}}</p>
+        <label for="Test">Test : </label>
+        <textarea name="Test" id="Test"></textarea>
+        <button type="submit">Création</button>
+    </form>
+
+</body>
+
+</html>

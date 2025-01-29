@@ -25,7 +25,8 @@ class LanguageController(Controller):
             
     def post(self, request):
         name = request.POST.get('Name')
-        new_language = Language(name=name.upper())
+        ext = request.POST.get('Extension')
+        new_language = Language(name=name.upper(),extension=ext.lower())
         new_language.save()
         messages.success(request, "Formulaire soumis avec succès !")
         return super().serialize(new_language, "user")

@@ -5,6 +5,7 @@ from app.Views.UserController import UserController
 from app.Views.GroupController import GroupController
 from app.Views.ExerciceController import ExerciceController
 from app.Views.LanguageController import LanguageController
+from app.Views.SubmitCode import SubmitCode
 from app.schema import urls
 
 router = SimpleRouter()
@@ -21,5 +22,6 @@ urlpatterns = [
     path('login/', UserController.login),
     path('exercice/', ExerciceController.as_view()),
     path('language/', LanguageController.as_view()),
+    path('submitcode/', SubmitCode.as_view()),
     path('schema/', include(urls)),
 ]

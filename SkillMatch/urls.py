@@ -14,5 +14,6 @@ urlpatterns = [
     path('createxercice/', views.CreateExercice),
     path('createlanguage/', views.CreateLanguage),
     path('upload/', views.UploadFile),
+    path("doexercice/", views.DoExercice),
     path('users/', UserController.as_view())
 ]
