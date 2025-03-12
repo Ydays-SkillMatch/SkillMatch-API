@@ -1,21 +1,27 @@
 import subprocess
 import os
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+
+CONFIG = {
+    "python": {"ext": "py", "image": "python:3.12-slim", "command": "python"},
+    "javascript": {"ext": "js", "image": "node:latest", "command": "node"},
+    "php": {"ext": "php", "image": "php:latest", "command": "php"}
+}
 
 def run_code_in_docker(language, user_file_path, test_code):
     try:
-        file_extension = {"python": "py", "javascript": "js", "php": "php"}
-        docker_images = {"python": "python:3.12-slim", "javascript": "node:latest", "php": "php:latest"}
+        if language not in CONFIG:
+            return {"success": False, "error": f"Unsupported language: {language}"}
 
-        if language not in file_extension or language not in docker_images:
-            return False, f"Unsupported language: {language}"
-
-        ext = file_extension[language]
+        config = CONFIG[language]
+        ext, image, command = config["ext"], config["image"], config["command"]
 
         current_dir = os.path.dirname(user_file_path).replace("\\", "/")
         temp_test_filename = os.path.join(current_dir, f"temp_test_script.{ext}")
 
         if not os.path.exists(user_file_path):
-            return False, f"Error: File not found at {user_file_path}"
+            return {"success": False, "error": f"File not found at {user_file_path}"}
 
         with open(user_file_path, "r") as user_file:
             user_code = user_file.read()
@@ -25,84 +31,40 @@ def run_code_in_docker(language, user_file_path, test_code):
         with open(temp_test_filename, "w") as temp_file:
             temp_file.write(full_code)
 
-        print(f"Temp file created at: {temp_test_filename}")
-
         result = subprocess.run(
             [
                 "docker", "run", "--rm", "-v",
                 f"{current_dir}:/app",
-                docker_images[language],
-                "node" if language == "javascript" else "python" if language == "python" else "php",
-                f"/app/{os.path.basename(temp_test_filename)}"
+                image,
+                command, f"/app/{os.path.basename(temp_test_filename)}"
             ],
             capture_output=True,
             text=True,
             timeout=30
         )
 
-        print("Docker output:")
-        print(result.stdout)
-
-        if result.returncode == 0:
-            return True, result.stdout
-        else:
-            return False, result.stderr
+        response = {"success": result.returncode == 0,
+                    "output": result.stdout if result.returncode == 0 else result.stderr}
 
     except subprocess.TimeoutExpired:
-        return False, "Execution timed out."
+        response = {"success": False, "error": "Execution timed out."}
     except Exception as e:
-        return False, str(e)
+        response = {"success": False, "error": str(e)}
     finally:
         if os.path.exists(temp_test_filename):
             os.remove(temp_test_filename)
-            print(f"Deleted temp file: {temp_test_filename}")
 
+    return response
 
-if __name__ == "__main__":
-    # Pour Python
-    user_file_path = os.path.join(os.getcwd(), "app", "functionTest", "user_file.py")
+@api_view(["POST"])
+def run_code(request):
+    data = request.data
+    language = data.get("language")
+    user_file_path = data.get("file_path")
+    test_code = data.get("test_code")
 
-    test_code_python = """
-try:
-    result = add(2, 3)
-    expected = 5
-    assert result == expected, f"Test failed: expected {expected}, got {result}"
-    print("Test passed!")
-except AssertionError as e:
-    print(f"AssertionError: {e}")
-except TypeError as e:
-    print(f"TypeError: {e}")
-except ZeroDivisionError as e:
-    print(f"ZeroDivisionError: {e}")
-except Exception as e:
-    print(f"Unexpected error: {e}")
-"""
+    if not all([language, user_file_path, test_code]):
+        return Response({"success": False, "error": "Missing required parameters."}, status=400)
 
-    success, output = run_code_in_docker("python", user_file_path, test_code_python)
-
-
-    # Pour JavaScript
-    user_file_path = os.path.join(os.getcwd(), "app", "functionTest", "user_file.js")
-
-    test_code_js = """
-try {
-    const result = add(2, 3);
-    const expected = 5;
-    if (result !== expected) {
-        console.log(`Test failed: expected ${expected}, got ${result}`);
-    } else {
-        console.log("Test passed!");
-    }
-} catch (e) {
-    console.log(`Error: ${e.message}`);
-}
-"""
-
-    success, output = run_code_in_docker("javascript", user_file_path, test_code_js)
-
-    if success:
-        print("JavaScript tests succeeded! Output:")
-        print(output)
-    else:
-        print("JavaScript tests failed! Error:")
-        print(output)
+    result = run_code_in_docker(language, user_file_path, test_code)
+    return Response(result)

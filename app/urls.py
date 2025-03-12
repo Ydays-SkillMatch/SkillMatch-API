@@ -5,6 +5,7 @@ from app.Views.UserController import UserController
 from app.Views.GroupController import GroupController
 from app.Views.ExerciceController import ExerciceController
 from app.Views.LanguageController import LanguageController
+from app.functionTest import testRunner
 from app.schema import urls
 
 router = SimpleRouter()
@@ -22,4 +23,5 @@ urlpatterns = [
     path('exercice/', ExerciceController.as_view()),
     path('language/', LanguageController.as_view()),
     path('schema/', include(urls)),
+    path("testRunner/", testRunner, name="testRunner"),
 ]
