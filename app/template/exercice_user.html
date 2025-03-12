@@ -1,5 +1,0 @@
-<form method="post" action="{% url 'submit_exercise' exercise.id %}">
-    {% csrf_token %}
-    <textarea name="user_code" rows="10" cols="80" placeholder="Écrivez votre code ici..."></textarea>
-    <button type="submit">Soumettre</button>
-</form>

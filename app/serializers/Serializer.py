@@ -33,3 +33,30 @@ class Serializer(serializers.ModelSerializer):
             dic[serialized_name] = serialized_value
             
         return dic
+    
+class ExerciseSerializer(serializers.Serializer):
+    name = serializers.CharField(required=True, max_length=255)
+    describe = serializers.CharField(required=True)
+    timer = serializers.IntegerField(required=True, min_value=0)
+    language = serializers.CharField(required=True, max_length=250)
+    Test = serializers.CharField(required=True, max_length=250)
+
+class GroupSerializer(serializers.Serializer):
+    uuid = serializers.CharField(required=True, max_length=255)
+    name = serializers.CharField(required=True, max_length=255)
+    uuidUser = serializers.CharField(required=True, max_length=50)
+    
+class LanguageSerializer(serializers.Serializer):
+    name = serializers.CharField(required=True, max_length=255)
+    extension = serializers.CharField(required=True, max_length=50)
+    
+class UserSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True, max_length=255)
+    email = serializers.CharField(required=True, max_length=255)
+    password = serializers.CharField(required=True, max_length=250)
+    
+class UserMSerializer(serializers.Serializer):
+    uuid = serializers.CharField(required=True, max_length=250)
+    username = serializers.CharField(required=True, max_length=255)
+    email = serializers.CharField(required=True, max_length=255)
+    admin = serializers.BooleanField(required=True)
