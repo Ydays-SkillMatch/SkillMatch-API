@@ -63,31 +63,38 @@ if __name__ == "__main__":
     user_file_path = os.path.join(os.getcwd(), "app", "functionTest", "user_file.py")
 
     test_code_python = """
-result = add(2, 3)
-expected = 5
-assert result == expected, f"Test failed: expected {expected}, got {result}"
-print("Test passed!")
+try:
+    result = add(2, 3)
+    expected = 5
+    assert result == expected, f"Test failed: expected {expected}, got {result}"
+    print("Test passed!")
+except AssertionError as e:
+    print(f"AssertionError: {e}")
+except TypeError as e:
+    print(f"TypeError: {e}")
+except ZeroDivisionError as e:
+    print(f"ZeroDivisionError: {e}")
+except Exception as e:
+    print(f"Unexpected error: {e}")
 """
 
     success, output = run_code_in_docker("python", user_file_path, test_code_python)
 
-    if success:
-        print("Python tests succeeded! Output:")
-        print(output)
-    else:
-        print("Python tests failed! Error:")
-        print(output)
 
     # Pour JavaScript
     user_file_path = os.path.join(os.getcwd(), "app", "functionTest", "user_file.js")
 
     test_code_js = """
-const result = add(2, 3);
-const expected = 5;
-if (result !== expected) {
-    console.log(`Test failed: expected ${expected}, got ${result}`);
-} else {
-    console.log("Test passed!");
+try {
+    const result = add(2, 3);
+    const expected = 5;
+    if (result !== expected) {
+        console.log(`Test failed: expected ${expected}, got ${result}`);
+    } else {
+        console.log("Test passed!");
+    }
+} catch (e) {
+    console.log(`Error: ${e.message}`);
 }
 """
 
