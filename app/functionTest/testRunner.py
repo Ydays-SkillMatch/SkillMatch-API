@@ -1,55 +1,47 @@
 import subprocess
 import os
 
-def run_test(user_code, test_code, language="python"):
+def run_code_in_docker(language, user_file_path, test_code):
     try:
-        # Dictionnaires pour gérer les extensions et les commandes par langage
-        file_extension = {"python": "py", "javascript": "js", "java": "java"}
-        interpreters = {
-            "python": ["python"],
-            "javascript": ["node"],
-            "java": ["javac", "java"]
-        }
+        file_extension = {"python": "py", "javascript": "js", "php": "php"}
+        docker_images = {"python": "python:3.12-slim", "javascript": "node:latest", "php": "php:latest"}
 
-        # Vérifier si le langage est pris en charge
-        if language not in file_extension or language not in interpreters:
+        if language not in file_extension or language not in docker_images:
             return False, f"Unsupported language: {language}"
 
         ext = file_extension[language]
-        temp_filename = f"temp_script.{ext}"
+
+        current_dir = os.path.dirname(user_file_path).replace("\\", "/")
+        temp_test_filename = os.path.join(current_dir, f"temp_test_script.{ext}")
+
+        if not os.path.exists(user_file_path):
+            return False, f"Error: File not found at {user_file_path}"
+
+        with open(user_file_path, "r") as user_file:
+            user_code = user_file.read()
+
         full_code = f"{user_code}\n{test_code}"
 
-        # Écrire le code dans un fichier temporaire
-        with open(temp_filename, "w") as temp_file:
+        with open(temp_test_filename, "w") as temp_file:
             temp_file.write(full_code)
 
-        if language == "java":
-            # Compilation et exécution pour Java
-            compile_result = subprocess.run(
-                ["javac", temp_filename],
-                capture_output=True,
-                text=True,
-                timeout=5
-            )
-            if compile_result.returncode != 0:
-                return False, compile_result.stderr
+        print(f"Temp file created at: {temp_test_filename}")
 
-            # Lancer le fichier compilé
-            class_name = temp_filename.replace(".java", "")
-            result = subprocess.run(
-                ["java", class_name],
-                capture_output=True,
-                text=True,
-                timeout=5
-            )
-            #Interprete le JS et python
-        else:
-            result = subprocess.run(
-                interpreters[language] + [temp_filename],
-                capture_output=True,
-                text=True,
-                timeout=5
-            )
+        result = subprocess.run(
+            [
+                "docker", "run", "--rm", "-v",
+                f"{current_dir}:/app",
+                docker_images[language],
+                "node" if language == "javascript" else "python" if language == "python" else "php",
+                f"/app/{os.path.basename(temp_test_filename)}"
+            ],
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
+
+        print("Docker output:")
+        print(result.stdout)
 
         if result.returncode == 0:
             return True, result.stdout
@@ -61,7 +53,49 @@ def run_test(user_code, test_code, language="python"):
     except Exception as e:
         return False, str(e)
     finally:
-        if os.path.exists(temp_filename):
-            os.remove(temp_filename)
-        if language == "java" and os.path.exists("temp_script.class"):
-            os.remove("temp_script.class")
+        if os.path.exists(temp_test_filename):
+            os.remove(temp_test_filename)
+            print(f"Deleted temp file: {temp_test_filename}")
+
+
+if __name__ == "__main__":
+    # Pour Python
+    user_file_path = os.path.join(os.getcwd(), "app", "functionTest", "user_file.py")
+
+    test_code_python = """
+result = add(2, 3)
+expected = 5
+assert result == expected, f"Test failed: expected {expected}, got {result}"
+print("Test passed!")
+"""
+
+    success, output = run_code_in_docker("python", user_file_path, test_code_python)
+
+    if success:
+        print("Python tests succeeded! Output:")
+        print(output)
+    else:
+        print("Python tests failed! Error:")
+        print(output)
+
+    # Pour JavaScript
+    user_file_path = os.path.join(os.getcwd(), "app", "functionTest", "user_file.js")
+
+    test_code_js = """
+const result = add(2, 3);
+const expected = 5;
+if (result !== expected) {
+    console.log(`Test failed: expected ${expected}, got ${result}`);
+} else {
+    console.log("Test passed!");
+}
+"""
+
+    success, output = run_code_in_docker("javascript", user_file_path, test_code_js)
+
+    if success:
+        print("JavaScript tests succeeded! Output:")
+        print(output)
+    else:
+        print("JavaScript tests failed! Error:")
+        print(output)
