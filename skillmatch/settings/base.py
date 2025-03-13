@@ -87,8 +87,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'skillmatch',
         'USER': 'skillmatch',
-        'PASSWORD': 'skillmatch',
-        'HOST': 'postgres',
+        'PASSWORD': 'skillmatchpassword',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }
