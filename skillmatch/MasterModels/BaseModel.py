@@ -10,6 +10,8 @@ class BaseModel(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     deleted_at = models.DateTimeField(blank=True,null=True)
     
-    def __getitem__(self, items):
-        return getattr(self, items)
-    
+    # def __getitem__(self, items):
+    #     return getattr(self, items)
+
+    class Meta:
+        abstract = True

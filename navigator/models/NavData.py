@@ -4,11 +4,11 @@ from skillmatch.MasterModels.BaseModel import BaseModel
 from users import models as user
 
 
-class NavData(models.Model):
-    type = models.CharField(max_length=255)
+class NavData(BaseModel):
+    data_type = models.CharField(max_length=255)
     data = models.TextField()
     user = models.ForeignKey(user.User, on_delete=models.CASCADE)
     timestamp = models.DateTimeField()
     
     def __repr__(self):
-        return f"<NavData {self.type}: {self.data}>"
+        return f"<NavData {self.data_type}: {self.data}>"
