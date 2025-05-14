@@ -1,9 +1,12 @@
 from skillmatch.MasterViews.BaseView import BaseView
 from organisation.models.Group import Group
 from organisation.serializers.GroupSerializer import GroupSerializer
+from organisation.serializers.GroupSerializer import GroupsSerializer
 from rest_framework import status
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema
+from django.shortcuts import get_object_or_404
+from users.models import User
 import json
 
 class GroupViewList(BaseView):
@@ -142,3 +145,41 @@ class GroupViewDetail(BaseView):
         else :
             return Response({"error": "Le Champ 'uuid' est obligatoire"}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"error": "Groupe Supprimé"}, status=status.HTTP_200_OK)
+    
+
+class GroupViewUser(BaseView):
+    serializer_class = GroupsSerializer
+    model_class = Group
+    
+    def __init__(self):
+        super().__init__()
+        
+    @extend_schema(
+        summary="Afficher un ou plusieurs groupes en fonction de L'user",
+        description="Récupére un ou plusieurs groupes selon l'utilisateur",
+        request=GroupsSerializer,  # Utilise le serializer pour définir la structure attendue
+        responses={200: GroupsSerializer}
+    )
+    
+    def get(self, request, id=None):
+        if id :
+            user = get_object_or_404(User, id=id)
+            test_group = Group.objects.filter(users=user)
+            serializer = GroupsSerializer(test_group, many=True)
+        else :
+            test_group = None
+            serializer = GroupsSerializer(test_group, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @extend_schema(exclude=True)
+    def post(self, request):
+        return Response({"error": "Méthode non autorisée"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+    @extend_schema(exclude=True)
+    def put(self, request):
+        return Response({"error": "Méthode non autorisée"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+    @extend_schema(exclude=True)
+    def delete(self, request):
+        return Response({"error": "Méthode non autorisée"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
