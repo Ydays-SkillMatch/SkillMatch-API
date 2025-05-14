@@ -2,7 +2,7 @@ from django.conf import settings
 from django.db import models
 from django.core.validators import MinValueValidator
 from skillmatch.MasterModels.BaseModel import BaseModel
-from language.models import Language
+from organisation.models.Language import Language
 from users.serializers import UserSerializer
 from users.models import User
 

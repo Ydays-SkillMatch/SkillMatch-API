@@ -1,5 +1,4 @@
 from django.db import models
-
 from skillmatch.MasterModels.BaseModel import BaseModel
 
 class Language(BaseModel):
