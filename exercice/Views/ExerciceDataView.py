@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from django.contrib import messages
 from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParameter
 
-from language.models import Language
+from organisation.models import Language
 from skillmatch.MasterViews.BaseView import BaseView
 from exercice.models import Exercice
 from exercice.serializers.ExerciceDataSerializer import ExerciceDataSerializer

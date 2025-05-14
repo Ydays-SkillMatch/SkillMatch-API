@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'skillmatch',
     'exercice',
     'language',
+    'organisation'
 ]
 
 MIDDLEWARE = [
