@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'users',
     'navigator',
     'skillmatch',
+    'exercice',
+    'language',
 ]
 
 MIDDLEWARE = [

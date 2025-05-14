@@ -2,6 +2,10 @@ services:
   postgres:
     image: postgres:15
     container_name: skillmatch-postgres
+    environment:
+      POSTGRES_DB: skillmatch
+      POSTGRES_USER: skillmatch
+      POSTGRES_PASSWORD: skillmatchpassword
     restart: unless-stopped
     env_file:
       - .env
