@@ -6,19 +6,19 @@ from users.models import User
 class UserGroupSerializer(serializers.ModelSerializer): 
     class Meta:
         model = User
-        fields = ('email', 'first_name', 'last_name')
+        fields = ('id', 'email', 'first_name', 'last_name')
 
-class GroupsSerializer(serializers.ModelSerializer):    
+class GroupsSerializer(serializers.ModelSerializer):  
+    owner_id = serializers.PrimaryKeyRelatedField(source='owner', read_only=True)
+      
     class Meta:
         model = Group
-        fields = ('uuid', 'name', 'created_at')
+        fields = ('uuid', 'name', 'created_at', 'owner_id')
 
 class GroupSerializer(serializers.ModelSerializer):
-    users = UserGroupSerializer(many=True)
+    users = UserGroupSerializer(many=True, read_only=True)
+    owner = UserGroupSerializer(read_only=True)
     
     class Meta:
         model = Group
-        fields = ('uuid', 'name', 'users', 'created_at')
-        
-        
-        
+        fields = ('uuid', 'name', 'users', 'owner', 'created_at')
