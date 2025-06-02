@@ -15,7 +15,8 @@ COPY requirements.txt requirements.txt
 
 RUN pip install --no-cache-dir --no-deps -r requirements.txt
 
+COPY . .
 
 EXPOSE ${PORT}
 
-CMD ["sh", "-c", "python3 manage.py runserver 0.0.0.0:${PORT}"]
+ENTRYPOINT ["sh", "-c", "python manage.py migrate --no-input && python manage.py runserver 0.0.0.0:${PORT}"]

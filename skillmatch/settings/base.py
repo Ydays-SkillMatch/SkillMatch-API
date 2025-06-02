@@ -91,7 +91,7 @@ DATABASES = {
         'NAME': 'skillmatch',
         'USER': 'skillmatch',
         'PASSWORD': 'skillmatch',
-        'HOST': 'postgres',
+        'HOST': 'skillmatch-postgres',
         'PORT': '5432',
     }
 }
