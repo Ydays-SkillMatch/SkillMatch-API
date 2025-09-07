@@ -1,11 +1,13 @@
 from rest_framework.response import Response
-from drf_spectacular.utils import extend_schema
-import os
-import uuid
+from drf_yasg.utils import swagger_auto_schema
+from app.serializers.Serializer import ExerciseSerializer
 from django.contrib import messages
 from app.Models.Exercice import Exercice
 from app.Models.Language import Language
 from app.Views.Controller import Controller
+from rest_framework.decorators import action
+import os
+import uuid
 
 
 class ExerciceController(Controller):
@@ -13,11 +15,6 @@ class ExerciceController(Controller):
     def __init__(self):
         super().__init__()
     
-    @extend_schema(
-        summary="Récupérer des exercices",
-        description="Retourne un exercice spécifique si un ID est fourni, sinon tous les exercices.",
-        responses={200: "Exercice data"}
-    )
     def get(self, request):
         # you are suppose to get exercices with the ORM here
         getuuid = request.GET.get('uuid')
@@ -31,35 +28,37 @@ class ExerciceController(Controller):
         return super().serialize(test_exercice, "user") #this route is a "user" type route, this mean only uuid will be returned, 
         # if you want to also return created_at, use "admin"
     
-    @extend_schema(
-        summary="Créer un exercice",
-        description="Crée un nouvel exercice et génère les fichiers nécessaires.",
-        request={
-            'application/json': {
-                'name': 'string',
-                'describe': 'string',
-                'timer': 'integer',
-                'language': 'string',
-                'Test': 'string',
-            }
-        },
-        responses={201: "Exercice créé"}
-    )
-            
+    @swagger_auto_schema(
+        request_body=ExerciseSerializer,  # Serializer utilisé pour documenter le corps de la requête
+        responses={201: "Exercise created", 400: "Invalid input"}
+    )       
     def post(self, request):
-        os.makedirs("app/exercice/python/test/", exist_ok=True)
-        os.makedirs("app/exercice/python/correct/", exist_ok=True)
-        name = request.POST.get('name')
-        describe = request.POST.get('describe')
-        timer = request.POST.get('timer')
-        language = Language.objects.get(uuid=request.POST.get('language'))
+        language_uuid = request.POST.get('language') or request.data.get('language')
+
+        if not language_uuid:
+            return Response({"error": "Language is required"}, status=400)
+
+        try:
+            if "-" in language_uuid:  # Vérifie si c'est un UUID (présence de tirets)
+                language = Language.objects.get(uuid=language_uuid)
+            else:  # Sinon, suppose que c'est le nom du langage
+                language = Language.objects.get(name=language_uuid.upper())
+        except Language.DoesNotExist:
+            return Response({"error": "Language not found"}, status=400)
+        
+        
+        os.makedirs(f"app/exercice/{language.name.lower()}/test/", exist_ok=True)
+        os.makedirs(f"app/exercice/{language.name.lower()}/correct/", exist_ok=True)
+        name = request.POST.get('name') if request.POST.get('name') != None else request.data.get('name')
+        describe = request.POST.get('describe') if request.POST.get('describe') != None else request.data.get('describe')
+        timer = request.POST.get('timer') if request.POST.get('timer') != None else request.data.get('timer')
         uuid2 = uuid.uuid4()
-        test = f"app/exercice/python/test/{uuid2}.txt"
-        correct = f"app/exercice/python/correct/{uuid2}.py"
+        test = f"app/exercice/{language.name.lower()}/test/{uuid2}.txt"
+        correct = f"app/exercice/{language.name.lower()}/correct/{uuid2}.{language.extension}"
         new_test = Exercice(uuid=uuid2,name=name,describe=describe,timer=timer,ex_language=language,test=test,correct=correct)
         new_test.save()
         with open(test, "w") as file:
-            file.write(request.POST.get('Test'))
+            file.write(request.POST.get('Test') or request.data.get('Test'))
         messages.success(request, "Formulaire soumis avec succès !")
         return super().serialize(new_test, "user")
         

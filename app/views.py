@@ -1,6 +1,7 @@
 import os
 from django.shortcuts import render, redirect
 from app.Models.Language import Language
+from app.Models.Exercice import Exercice
 from django.http import HttpResponse
 from app.Models.User import User
 
@@ -10,6 +11,13 @@ def CreateExercice(request) :
         'lang': lang
     }
     return render(request, "exercice.html",contexte)
+
+def DoExercice(request) :
+    exercice = Exercice.objects.get(uuid=request.GET.get("uuid"))
+    contexte = {
+        'exercice': exercice
+    }
+    return render(request, "exercice2.html",contexte)
 
 def UploadFile(request) :
     if request.method == "POST" :
